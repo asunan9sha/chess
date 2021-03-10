@@ -5,6 +5,7 @@
 #include "SFML/Graphics/Color.hpp"
 
 typedef sf::Vector2f vec2;
+typedef sf::Vector2i vec2i;
 
 struct vec4 {
   float x;
