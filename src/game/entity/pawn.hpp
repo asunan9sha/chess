@@ -12,9 +12,6 @@ public:
   void move() override;
   void showMoves() override;
   void clearMoves() override;
-  void moveS(Piece& piece);
-private:
-  bool isMoved_;
 };
 
 

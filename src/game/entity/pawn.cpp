@@ -2,7 +2,7 @@
 #include "board.hpp"
 
 Pawn::Pawn(PieceType type, const vec2 &pos, const vec2 &size, const vec2i boardPos, const sf::Texture &texture)
-    : Piece(type, pos, size, texture), isMoved_(false) {
+    : Piece(type, pos, size, texture) {
 
   boardPos_ = boardPos;
 
@@ -22,21 +22,23 @@ void Pawn::update(float delta) {
 }
 
 void Pawn::move() {
-
-}
-
-void Pawn::moveS(Piece &piece) {
-
+  if (pickedPiece_) {
+//    Board::movePiece(pickedPiece_->getBoardPos(), )
+  }
 }
 
 void Pawn::showMoves() {
   circleShapes_.clear();
-  if (!isMoved_ && pickedPiece_) {
-    circleShapes_.push_back(new sf::CircleShape(50));
-    circleShapes_.push_back(new sf::CircleShape(50));
+  if (pickedPiece_) {
+    if (!isMoved_) {
+      circleShapes_.push_back(new sf::CircleShape(50));
+      circleShapes_.push_back(new sf::CircleShape(50));
+    } else {
+      circleShapes_.push_back(new sf::CircleShape(50));
+    }
 
     float temp;
-    if(pickedPiece_->getType() == PieceType::whitePawn){
+    if (pickedPiece_->getType() == PieceType::whitePawn) {
       temp = -150.0f;
     } else {
       temp = 150.0f;
@@ -44,8 +46,8 @@ void Pawn::showMoves() {
 
     for (auto &c : circleShapes_) {
       c->setPosition(pickedPiece_->getPosition().x - 50.0f, pickedPiece_->getPosition().y + temp);
-      c->setFillColor(sf::Color(0,0,0,150));
-      if(pickedPiece_->getType() == PieceType::whitePawn){
+      c->setFillColor(sf::Color(0, 0, 0, 150));
+      if (pickedPiece_->getType() == PieceType::whitePawn) {
         temp -= 100.0f;
       } else {
         temp -= 100.0f;
@@ -55,5 +57,6 @@ void Pawn::showMoves() {
 }
 
 void Pawn::clearMoves() {
+  pickedPiece_ = nullptr;
   circleShapes_.clear();
 }

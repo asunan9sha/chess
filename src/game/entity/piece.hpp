@@ -20,8 +20,8 @@ public:
   virtual void move() = 0;
   virtual void showMoves() = 0;
   virtual void clearMoves() = 0;
-  void pick();
-  void unPick();
+
+  virtual
 
   inline bool picked() { return isPicked_; }
 
@@ -35,10 +35,11 @@ private:
 
 protected:
   std::vector<sf::CircleShape *> circleShapes_;
+  std::vector<vec2i> circleBoardPos_;
   vec2i boardPos_;
 
   bool isPicked_;
-
+  bool isMoved_;
   inline static Piece *pickedPiece_ = nullptr;
 };
 
