@@ -3,14 +3,18 @@
 
 #include "piece.hpp"
 
-
 class Pawn : public Piece {
 public:
-  explicit Pawn(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture &texture);
+  explicit Pawn(PieceType type, const vec2 &pos, const vec2 &size, const vec2i boardPos, const sf::Texture &texture);
+
+  void update(float delta) override;
 
   void move() override;
+  void showMoves() override;
+  void clearMoves() override;
   void moveS(Piece& piece);
-  void showMoves();
+private:
+  bool isMoved_;
 };
 
 

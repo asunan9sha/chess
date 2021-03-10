@@ -23,12 +23,15 @@ public:
   void update(float delta);
   void fixedUpdate(float delta);
 
+  void movePiece(vec2i piecePos, vec2i destination);
+
+  static vec2i convertToInt(vec2 pos);
+  static vec2 convertToFloat(vec2i pos);
 
   std::vector<Piece *> pieces_;
 
 private:
   void initBoard();
-  float convertCoord(int x, int y);
 
 private:
   int board_[8][8] = {-4, -2, -3, -6, -5, -3, -2, -4,
