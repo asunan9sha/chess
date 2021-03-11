@@ -1,3 +1,4 @@
+#include <iostream>
 #include "pawn.hpp"
 #include "board.hpp"
 
@@ -34,6 +35,7 @@ void Pawn::showMoves() {
       circleShapes_.push_back(new sf::CircleShape(50));
       circleShapes_.push_back(new sf::CircleShape(50));
     } else {
+      circleShapes_.clear();
       circleShapes_.push_back(new sf::CircleShape(50));
     }
 
@@ -43,7 +45,6 @@ void Pawn::showMoves() {
     } else {
       temp = 150.0f;
     }
-
     for (auto &c : circleShapes_) {
       c->setPosition(pickedPiece_->getPosition().x - 50.0f, pickedPiece_->getPosition().y + temp);
       c->setFillColor(sf::Color(0, 0, 0, 150));
@@ -57,6 +58,6 @@ void Pawn::showMoves() {
 }
 
 void Pawn::clearMoves() {
-  pickedPiece_ = nullptr;
-  circleShapes_.clear();
+   pickedPiece_ = nullptr;
+   circleShapes_.clear();
 }

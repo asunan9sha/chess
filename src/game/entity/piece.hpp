@@ -21,10 +21,6 @@ public:
   virtual void showMoves() = 0;
   virtual void clearMoves() = 0;
 
-  virtual
-
-  inline bool picked() { return isPicked_; }
-
   virtual inline PieceType getType() const { return pieceType_; }
   inline std::vector<sf::CircleShape *> getCircles() { return circleShapes_; }
   inline static Piece* getPickedPiece() { return pickedPiece_; }
@@ -38,7 +34,6 @@ protected:
   std::vector<vec2i> circleBoardPos_;
   vec2i boardPos_;
 
-  bool isPicked_;
   bool isMoved_;
   inline static Piece *pickedPiece_ = nullptr;
 };
