@@ -1,17 +1,9 @@
 #include <iostream>
 #include "pawn.hpp"
-#include "board.hpp"
 
-Pawn::Pawn(PieceType type, const vec2 &pos, const vec2 &size, const vec2i boardPos, const sf::Texture &texture)
-    : Piece(type, pos, size, texture) {
+Pawn::Pawn(PieceType type)
+   : Piece(type, type == PieceType::whitePawn? sf::IntRect(1000, 0, 200, 200) : sf::IntRect(1000, 200, 200, 200)) {
 
-  boardPos_ = boardPos;
-
-  if (Pawn::getType() == PieceType::whitePawn) {
-    setTextureRect(sf::IntRect(1000, 0, 200, 200));
-  } else {
-    setTextureRect(sf::IntRect(1000, 200, 200, 200));
-  }
 }
 
 void Pawn::update(float delta) {

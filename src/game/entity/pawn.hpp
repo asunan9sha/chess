@@ -3,13 +3,14 @@
 
 #include "piece.hpp"
 
+
 class Pawn : public Piece {
 public:
-  explicit Pawn(PieceType type, const vec2 &pos, const vec2 &size, const vec2i boardPos, const sf::Texture &texture);
+  explicit Pawn(PieceType type);
 
   void update(float delta) override;
   void showMoves() override;
 };
 
 
-#endif //CHESS_PAWN_HPP
+#endif

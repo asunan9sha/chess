@@ -1,130 +1,122 @@
+#include <iostream>
 #include "board.hpp"
 #include "renderers/masterrenderer.hpp"
 #include "resources/resourceholder.hpp"
+#include "pawn.hpp"
+#include "kninght.hpp"
+#include "bishop.hpp"
+#include "king.hpp"
+#include "queen.hpp"
+#include "rook.hpp"
+#include "utils/assert.hpp"
 
-Board::Board(const vec2 &pos, const vec2 &size, const sf::Texture &texture, float angle) {
 
-  setPosition(pos.x, pos.y);
-  setRotation(angle);
-  setSize(size);
-  setTexture(&texture);
+Board::Board() {
 
   initBoard();
 }
 
-Board::~Board() {
-  for (auto &p : pieces_) {
-    delete p;
-  }
-}
-
 void Board::render(MasterRenderer &renderer) {
-  renderer.submit(*this);
+  for (size_t i = 0; i < BOARD_SIZE; i++) {
+    for (size_t j = 0; j < BOARD_SIZE; j++) {
+      board_[i][j]->render(renderer);
+    }
+  }
 }
 
 void Board::input(const sf::Event &event) {
-  for (const auto &p: pieces_) {
-      p->input(event);
-  }
-}
-
-void Board::update(float delta) {
-  for (const auto &p : pieces_) {
-    p->update(delta);
-  }
-}
-
-void Board::fixedUpdate(float delta) {
-
-}
-
-void Board::initBoard() {
-  float spacing = 100.0f;
-  for (int i = 0; i < 8; i++) {
-    for (int j = 0; j < 8; j++) {
-      switch (board_[i][j]) {
-        case 1:
-          pieces_.push_back(
-              new Pawn(PieceType::whitePawn, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f}, {i, j},
-                       ResourceHolder::getTexture("pieces.png")));
-          break;
-        case -1:
-          pieces_.push_back(
-              new Pawn(PieceType::blackPawn, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f}, {i, j},
-                       ResourceHolder::getTexture("pieces.png")));
-          break;
-        case 2:
-          pieces_.push_back(
-              new Knight(PieceType::whiteKnight, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                         ResourceHolder::getTexture("pieces.png")));
-          break;
-        case -2:
-          pieces_.push_back(
-              new Knight(PieceType::blackKnight, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                         ResourceHolder::getTexture("pieces.png")));
-          break;
-        case 3:
-          pieces_.push_back(
-              new Bishop(PieceType::whiteBishop, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                         ResourceHolder::getTexture("pieces.png")));
-          break;
-        case -3:
-          pieces_.push_back(
-              new Bishop(PieceType::blackBishop, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                         ResourceHolder::getTexture("pieces.png")));
-          break;
-        case 4:
-          pieces_.push_back(
-              new Rook(PieceType::whiteRook, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                       ResourceHolder::getTexture("pieces.png")));
-          break;
-        case -4:
-          pieces_.push_back(
-              new Rook(PieceType::blackRook, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                       ResourceHolder::getTexture("pieces.png")));
-          break;
-        case 5:
-          pieces_.push_back(
-              new King(PieceType::whiteKing, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                       ResourceHolder::getTexture("pieces.png")));
-          break;
-        case -5:
-          pieces_.push_back(
-              new King(PieceType::blackKing, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                       ResourceHolder::getTexture("pieces.png")));
-          break;
-        case 6:
-          pieces_.push_back(
-              new Queen(PieceType::whiteQueen, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                        ResourceHolder::getTexture("pieces.png")));
-          break;
-        case -6:
-          pieces_.push_back(
-              new Queen(PieceType::blackQueen, {50.0f + (spacing * j), 50.0f + (spacing * i)}, {100.0f, 100.0f},
-                        ResourceHolder::getTexture("pieces.png")));
-          break;
-        default:break;
+  if (event.type == sf::Event::MouseButtonPressed) {
+    if (event.mouseButton.button == sf::Mouse::Left) {
+      const int x = static_cast<int>(event.mouseButton.x / CELL_SIZE);
+      const int y = static_cast<int>(event.mouseButton.y / CELL_SIZE);
+      if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE ){
+       // getCell(x, y).getPiece().;
       }
     }
   }
 }
 
-vec2i Board::convertToInt(vec2 pos) {
-  vec2i temp;
-  temp.x = static_cast<int>((pos.x - 50.0f) / 100.0f);
-  temp.y = static_cast<int>((pos.y - 50.0f) / 100.0f);
-  return temp;
+void Board::update(float delta) {
+  for (size_t i = 0; i < BOARD_SIZE; i++) {
+    for (size_t j = 0; j < BOARD_SIZE; j++) {
+      board_[i][j]->update(delta);
+    }
+  }
 }
-vec2 Board::convertToFloat(vec2i pos) {
-  vec2 temp;
-  temp.x = 50.0f + (pos.x * 100.0f);
-  temp.y = 50.0f + (pos.y * 100.0f);
-  return temp;
+
+void Board::initBoard() {
+  bool isWhite = true;
+  for (size_t i = 0; i < BOARD_SIZE; i++) {
+    for (size_t j = 0; j < BOARD_SIZE; j++) {
+      std::unique_ptr<Piece> piece;
+      if (i == 0 || i == BOARD_SIZE - 1) {
+        piece = getUniquePiece(j, i);
+      } else if (i == 1) {
+        piece = getPieceByType(PieceType::whitePawn);
+      } else if (i == BOARD_SIZE - 2) {
+        piece = getPieceByType(PieceType::blackPawn);
+      }
+
+      const vec2 pos = {CELL_SIZE * static_cast<float>(j), CELL_SIZE * static_cast<float>(i)};
+      board_[i][j] = std::make_unique<Cell>(std::move(piece), pos, isWhite);
+      isWhite = !isWhite;
+    }
+    isWhite = !isWhite;
+  }
 }
 
 void Board::movePiece(vec2i piecePos, vec2i destination) {
-  if (board_[piecePos.x][piecePos.y] != 0) {
-    board_[destination.x][destination.y] = board_[piecePos.x][piecePos.y];
-    board_[piecePos.x][piecePos.y] = 0;
+//  if (board_[piecePos.x][piecePos.y] != 0) {
+//    board_[destination.x][destination.y] = board_[piecePos.x][piecePos.y];
+//    board_[piecePos.x][piecePos.y] = 0;
+//  }
+}
+
+std::unique_ptr<Piece> Board::getPieceByType(PieceType type) const {
+  switch (type) {
+
+    case PieceType::whitePawn:return std::make_unique<Pawn>(PieceType::whitePawn);
+    case PieceType::whiteKnight:return std::make_unique<Knight>(PieceType::whiteKnight);
+    case PieceType::whiteBishop:return std::make_unique<Bishop>(PieceType::whiteBishop);
+    case PieceType::whiteRook:return std::make_unique<Rook>(PieceType::whiteRook);
+    case PieceType::whiteKing:return std::make_unique<King>(PieceType::whiteKing);
+    case PieceType::whiteQueen:return std::make_unique<Queen>(PieceType::whiteQueen);
+    case PieceType::blackPawn:return std::make_unique<Pawn>(PieceType::blackPawn);
+    case PieceType::blackKnight:return std::make_unique<Knight>(PieceType::blackKnight);
+    case PieceType::blackBishop:return std::make_unique<Bishop>(PieceType::blackBishop);
+    case PieceType::blackRook:return std::make_unique<Rook>(PieceType::blackRook);
+    case PieceType::blackKing:return std::make_unique<King>(PieceType::blackKing);
+    case PieceType::blackQueen:return std::make_unique<Queen>(PieceType::blackQueen);
   }
+  return std::unique_ptr<Piece>();
+}
+
+std::unique_ptr<Piece> Board::getUniquePiece(size_t x, size_t y) const {
+  const bool isWhite = y < BOARD_SIZE / 2;
+  if (x == 0 || x == BOARD_SIZE - 1) {
+    return getPieceByType(isWhite ? PieceType::whiteRook : PieceType::blackRook);
+  }
+  if (x == 1 || x == BOARD_SIZE - 2) {
+    return getPieceByType(isWhite ? PieceType::whiteKnight : PieceType::blackKnight);
+  }
+  if (x == 2 || x == BOARD_SIZE - 3) {
+    return getPieceByType(isWhite ? PieceType::whiteBishop : PieceType::blackBishop);
+  }
+  if (x == 3) {
+    return getPieceByType(isWhite ? PieceType::whiteQueen : PieceType::blackQueen);
+  }
+  return getPieceByType(isWhite ? PieceType::whiteKing : PieceType::blackKing);
+}
+
+Cell &Board::getCell(size_t x, size_t y) {
+  static Cell *empty = new Cell();
+  if (x > BOARD_SIZE) {
+    ASSERT(false);
+    return *empty;
+  }
+  if (y > BOARD_SIZE) {
+    ASSERT(false);
+    return *empty;
+  }
+  return *board_[x][y];
 }

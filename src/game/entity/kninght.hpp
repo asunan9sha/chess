@@ -6,8 +6,7 @@
 
 class Knight : public Piece {
 public:
-  explicit Knight(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture &texture);
-
+  explicit Knight(PieceType type);
   void showMoves() override {}
   void clearMoves() override {}
 };

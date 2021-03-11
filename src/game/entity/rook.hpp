@@ -6,10 +6,9 @@
 
 class Rook : public Piece {
 public:
-  explicit Rook(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture &texture);
-
+  explicit Rook(PieceType type);
   void showMoves() override;
-  void clearMoves() override {}
+  void clearMoves() override { }
 };
 
 

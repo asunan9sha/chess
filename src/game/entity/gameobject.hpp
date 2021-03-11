@@ -2,6 +2,7 @@
 #define RPJ_GAMEOBJECT_HPP
 
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Window/Event.hpp>
 #include "utils/types.hpp"
 
 class MasterRenderer;

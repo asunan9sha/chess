@@ -1,11 +1,6 @@
 #include "king.hpp"
 
-King::King(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture &texture)
-    : Piece(type, pos, size, texture) {
+King::King(PieceType type)
+  : Piece(type, type == PieceType::whiteKing? sf::IntRect(0, 0, 200, 200) : sf::IntRect(0, 200, 200, 200)) {
 
-  if(King::getType() == PieceType::whiteKing){
-    setTextureRect(sf::IntRect(0, 0, 200, 200));
-  } else {
-    setTextureRect(sf::IntRect(0, 200, 200, 200));
-  }
 }

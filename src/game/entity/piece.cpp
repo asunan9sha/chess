@@ -1,3 +1,4 @@
+#include <resources/resourceholder.hpp>
 #include "piece.hpp"
 #include "renderers/masterrenderer.hpp"
 #include "board.hpp"
@@ -5,13 +6,12 @@
 
 Piece *Piece::pickedPiece_ = nullptr;
 
-Piece::Piece(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture &texture) :
-    pieceType_(type), isMoved_(false) {
 
-  setOrigin(size.x / 2, size.y / 2);
-  setPosition(pos.x, pos.y);
-  setSize(size);
-  setTexture(&texture);
+Piece::Piece(PieceType type, const sf::IntRect &rect)
+    : pieceType_(type), isMoved_(false) {
+  setSize({Board::CELL_SIZE, Board::CELL_SIZE});
+  setTexture(&ResourceHolder::getTexture(ATLAS));
+  setTextureRect(rect);
 }
 
 void Piece::render(MasterRenderer &renderer) {

@@ -6,8 +6,7 @@
 
 class Bishop : public Piece {
 public:
-  explicit Bishop(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture &texture);
-
+  explicit Bishop(PieceType type);
   void showMoves() override {}
   void clearMoves() override {}
 };
