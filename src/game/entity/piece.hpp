@@ -4,9 +4,23 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include "gameobject.hpp"
-#include "piecetype.hpp"
 #include "utils/types.hpp"
 #include "app/window.hpp"
+
+enum class PieceType {
+  whitePawn = 1,
+  whiteKnight,
+  whiteBishop,
+  whiteRook,
+  whiteKing,
+  whiteQueen,
+  blackPawn,
+  blackKnight,
+  blackBishop,
+  blackRook,
+  blackKing,
+  blackQueen
+};
 
 
 class Piece : public GameObject {
@@ -17,9 +31,8 @@ public:
   void input(const sf::Event &event) override;
   void update(float delta) override { }
 
-  virtual void move() = 0;
   virtual void showMoves() = 0;
-  virtual void clearMoves() = 0;
+  virtual void clearMoves();
 
   virtual inline PieceType getType() const { return pieceType_; }
   inline std::vector<sf::CircleShape *> getCircles() { return circleShapes_; }
@@ -31,11 +44,10 @@ private:
 
 protected:
   std::vector<sf::CircleShape *> circleShapes_;
-  std::vector<vec2i> circleBoardPos_;
   vec2i boardPos_;
 
   bool isMoved_;
-  inline static Piece *pickedPiece_ = nullptr;
+  static Piece *pickedPiece_;
 };
 
 

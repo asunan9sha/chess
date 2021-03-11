@@ -23,28 +23,27 @@ public:
   void update(float delta);
   void fixedUpdate(float delta);
 
-  void movePiece(vec2i piecePos, vec2i destination);
+  static void movePiece(vec2i piecePos, vec2i destination);
 
   static vec2i convertToInt(vec2 pos);
   static vec2 convertToFloat(vec2i pos);
 
   std::vector<Piece *> pieces_;
+  static inline int getByIndex(int x, int y) { return board_[x][y]; }
 
 private:
   void initBoard();
 
 private:
-  int board_[8][8] = {-4, -2, -3, -6, -5, -3, -2, -4,
-                      -1, -1, -1, -1, -1, -1, -1, -1,
-                       0,  0,  0,  0,  0,  0,  0,  0,
-                       0,  0,  0,  0,  0,  0,  0,  0,
-                       0,  0,  0,  0,  0,  0,  0,  0,
-                       0,  0,  0,  0,  0,  0,  0,  0,
-                       1,  1,  1,  1,  1,  1,  1,  1,
-                       4,  2,  3,  6,  5,  3,  2,  4,
+  inline static int board_[8][8] = {-4, -2, -3, -6, -5, -3, -2, -4,
+                                    -1, -1, -1, -1, -1, -1, -1, -1,
+                                     0,  0,  0,  0,  0,  0,  0,  0,
+                                     0,  0,  0,  0,  0,  0,  0,  0,
+                                     0,  0,  0,  0,  0,  0,  0,  0,
+                                     0,  0,  0,  0,  0,  0,  0,  0,
+                                     1,  1,  1,  1,  1,  1,  1,  1,
+                                     4,  2,  3,  6,  5,  3,  2,  4,
   };
-
-
 };
 
 

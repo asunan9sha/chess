@@ -8,10 +8,7 @@ public:
   explicit Pawn(PieceType type, const vec2 &pos, const vec2 &size, const vec2i boardPos, const sf::Texture &texture);
 
   void update(float delta) override;
-
-  void move() override;
   void showMoves() override;
-  void clearMoves() override;
 };
 
 

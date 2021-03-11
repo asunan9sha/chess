@@ -9,6 +9,3 @@ King::King(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture 
     setTextureRect(sf::IntRect(0, 200, 200, 200));
   }
 }
-void King::move() {
-
-}

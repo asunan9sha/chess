@@ -9,6 +9,3 @@ Queen::Queen(PieceType type, const vec2 &pos, const vec2 &size, const sf::Textur
     setTextureRect(sf::IntRect(200, 200, 200, 200));
   }
 }
-void Queen::move() {
-
-}

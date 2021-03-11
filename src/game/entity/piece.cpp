@@ -3,6 +3,8 @@
 #include "board.hpp"
 #include "iostream"
 
+Piece *Piece::pickedPiece_ = nullptr;
+
 Piece::Piece(PieceType type, const vec2 &pos, const vec2 &size, const sf::Texture &texture) :
     pieceType_(type), isMoved_(false) {
 
@@ -30,17 +32,22 @@ void Piece::input(const sf::Event &event) {
               fabs((c->getPosition().y + 50.0f) - mousePos.y) < 50.0f) {
             Board::movePiece(pickedPiece_->getBoardPos(), {static_cast<int>((c->getPosition().x - 50.0f) / 100.0f),
                                                            static_cast<int>((c->getPosition().y - 50.0f) / 100.0f)});
-            std::cout<<"circle pos x ="<<c->getPosition().x<<" "<<"circle pos y ="<<c->getPosition().y<<std::endl;
+            std::cout << "circle pos x =" << c->getPosition().x << " " << "circle pos y =" << c->getPosition().y
+                      << std::endl;
             pickedPiece_->setPosition(c->getPosition().x + 50.0f, c->getPosition().y + 50.0f);
             pickedPiece_->isMoved_ = true;
             clearMoves();
           }
         }
-
       }
     }
     if (event.mouseButton.button == sf::Mouse::Right) {
       pickedPiece_ = nullptr;
     }
   }
+}
+
+void Piece::clearMoves() {
+  pickedPiece_ = nullptr;
+  circleShapes_.clear();
 }

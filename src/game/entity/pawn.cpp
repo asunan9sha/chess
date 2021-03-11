@@ -22,15 +22,12 @@ void Pawn::update(float delta) {
   }
 }
 
-void Pawn::move() {
-  if (pickedPiece_) {
-//    Board::movePiece(pickedPiece_->getBoardPos(), )
-  }
-}
-
 void Pawn::showMoves() {
   circleShapes_.clear();
   if (pickedPiece_) {
+//    if(Board::getByIndex(pickedPiece_->getBoardPos().x,pickedPiece_->getBoardPos().y - (pickedPiece_->getType() == PieceType::whitePawn? -1 : 1)) == 0 && ) {
+//
+//    }
     if (!isMoved_) {
       circleShapes_.push_back(new sf::CircleShape(50));
       circleShapes_.push_back(new sf::CircleShape(50));
@@ -39,25 +36,14 @@ void Pawn::showMoves() {
       circleShapes_.push_back(new sf::CircleShape(50));
     }
 
-    float temp;
-    if (pickedPiece_->getType() == PieceType::whitePawn) {
-      temp = -150.0f;
-    } else {
-      temp = 150.0f;
-    }
+    float spacingWhite = -150.0f;;
+    float spacingBlack = 50.0f;;
+
     for (auto &c : circleShapes_) {
-      c->setPosition(pickedPiece_->getPosition().x - 50.0f, pickedPiece_->getPosition().y + temp);
+      c->setPosition(pickedPiece_->getPosition().x - 50.0f, pickedPiece_->getPosition().y + (pickedPiece_->getType() == PieceType::whitePawn ? spacingWhite : spacingBlack));
       c->setFillColor(sf::Color(0, 0, 0, 150));
-      if (pickedPiece_->getType() == PieceType::whitePawn) {
-        temp -= 100.0f;
-      } else {
-        temp -= 100.0f;
+        spacingWhite -= 100.0f;
+        spacingBlack += 100.0f;
       }
     }
   }
-}
-
-void Pawn::clearMoves() {
-   pickedPiece_ = nullptr;
-   circleShapes_.clear();
-}

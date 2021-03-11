@@ -8,6 +8,3 @@ Bishop::Bishop(PieceType type, const vec2 &pos, const vec2 &size, const sf::Text
     setTextureRect(sf::IntRect(400, 200, 200, 200));
   }
 }
-void Bishop::move() {
-
-}

@@ -51,8 +51,8 @@ void Application::run() {
 
     window_->update();
 
-    std::cout<<sf::Mouse::getPosition(window_->raw()).x<<" ";
-    std::cout<<sf::Mouse::getPosition(window_->raw()).y<<std::endl;
+//    std::cout<<sf::Mouse::getPosition(window_->raw()).x<<" ";
+//    std::cout<<sf::Mouse::getPosition(window_->raw()).y<<std::endl;
 
     handleInput();
 

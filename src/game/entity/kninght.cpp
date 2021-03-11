@@ -9,6 +9,3 @@ Knight::Knight(PieceType type, const vec2 &pos, const vec2 &size, const sf::Text
     setTextureRect(sf::IntRect(600, 200, 200, 200));
   }
 }
-void Knight::move() {
-
-}

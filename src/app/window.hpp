@@ -2,8 +2,10 @@
 #define CHESS_WINDOW_HPP
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <utils/types.hpp>
 #include "config.hpp"
 #include "utils/singleton.hpp"
+
 
 class Window : public Singleton {
 public:

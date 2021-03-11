@@ -26,7 +26,7 @@ public:
   void onOpen() override;
 
 private:
-  Board *board;
+  Board *board_;
 
 };
 
