@@ -17,9 +17,11 @@ public:
   Cell &getCell(size_t x, size_t y);
 
   static void movePiece(vec2i piecePos, vec2i destination);
+  inline static float getCellSize() { return CELL_SIZE;}
 
 private:
   void initBoard();
+
   std::unique_ptr<Piece> getPieceByType(PieceType type) const;
   std::unique_ptr<Piece> getUniquePiece(size_t x, size_t y) const;
 
@@ -29,6 +31,7 @@ public:
 private:
   static constexpr const size_t BOARD_SIZE = 8;
   std::array<std::array<std::unique_ptr<Cell>, BOARD_SIZE>, BOARD_SIZE> board_;
+  Cell* pickedCell_;
 };
 
 

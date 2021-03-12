@@ -16,13 +16,15 @@ public:
   Piece &getPiece() { return *piece_; }
   const Piece &getPiece() const { return *piece_; }
 
-  bool isWhite() const { return isWhite_; }
+  bool getPieceColor();
+  inline bool isPeacePlaced() const { return isPiecePlaced_;}
 
-  //bool isEmpty() { return }
+  bool isWhite() const { return isWhite_; }
 
 private:
   bool isWhite_ = true;
   std::unique_ptr<Piece> piece_;
+  bool isPiecePlaced_;
 };
 
 

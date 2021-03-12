@@ -9,10 +9,10 @@
 #include "queen.hpp"
 #include "rook.hpp"
 #include "utils/assert.hpp"
+#include "utils/random.hpp"
 
 
-Board::Board() {
-
+Board::Board() : pickedCell_(nullptr) {
   initBoard();
 }
 
@@ -29,9 +29,15 @@ void Board::input(const sf::Event &event) {
     if (event.mouseButton.button == sf::Mouse::Left) {
       const int x = static_cast<int>(event.mouseButton.x / CELL_SIZE);
       const int y = static_cast<int>(event.mouseButton.y / CELL_SIZE);
-      if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE ){
-       // getCell(x, y).getPiece().;
+      if (event.mouseButton.button == sf::Mouse::Left) {
+        if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE && getCell(x, y).isPeacePlaced()) {
+          pickedCell_ = &getCell(x, y);
+          std::cout<<"placed peace x ="<< getCell(x, y).getPosition().x <<" "<<"placed peace y ="<< getCell(x, y).getPosition().y<<std::endl;
+        }
       }
+    }
+    if (event.mouseButton.button == sf::Mouse::Right) {
+      pickedCell_ = nullptr;
     }
   }
 }
@@ -40,6 +46,9 @@ void Board::update(float delta) {
   for (size_t i = 0; i < BOARD_SIZE; i++) {
     for (size_t j = 0; j < BOARD_SIZE; j++) {
       board_[i][j]->update(delta);
+      if(board_[i][j]->isPeacePlaced() && pickedCell_ ){
+        board_[i][j]->getPiece().showMoves();
+      }
     }
   }
 }
@@ -48,7 +57,7 @@ void Board::initBoard() {
   bool isWhite = true;
   for (size_t i = 0; i < BOARD_SIZE; i++) {
     for (size_t j = 0; j < BOARD_SIZE; j++) {
-      std::unique_ptr<Piece> piece;
+      std::unique_ptr<Piece> piece = nullptr;
       if (i == 0 || i == BOARD_SIZE - 1) {
         piece = getUniquePiece(j, i);
       } else if (i == 1) {
@@ -92,7 +101,7 @@ std::unique_ptr<Piece> Board::getPieceByType(PieceType type) const {
 }
 
 std::unique_ptr<Piece> Board::getUniquePiece(size_t x, size_t y) const {
-  const bool isWhite = y < BOARD_SIZE / 2;
+  const bool isWhite = y < BOARD_SIZE / 2L;
   if (x == 0 || x == BOARD_SIZE - 1) {
     return getPieceByType(isWhite ? PieceType::whiteRook : PieceType::blackRook);
   }
@@ -118,5 +127,5 @@ Cell &Board::getCell(size_t x, size_t y) {
     ASSERT(false);
     return *empty;
   }
-  return *board_[x][y];
+  return *board_[y][x];
 }
