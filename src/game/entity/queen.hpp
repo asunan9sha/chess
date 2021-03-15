@@ -7,8 +7,8 @@
 class Queen : public Piece {
 public:
   explicit Queen(PieceType type);
-  void showMoves() override {}
-  void clearMoves() override {}
+
+  std::vector<vec2i> &getPossibleMoves(vec2i currentPos) override;
 };
 
 

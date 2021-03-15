@@ -1,41 +1,17 @@
-#include <iostream>
 #include "pawn.hpp"
 
 Pawn::Pawn(PieceType type)
-   : Piece(type, type == PieceType::whitePawn? sf::IntRect(1000, 0, 200, 200) : sf::IntRect(1000, 200, 200, 200)) {
-
+    : Piece(type, type == PieceType::whitePawn ? sf::IntRect(1000, 0, 200, 200) : sf::IntRect(1000, 200, 200, 200)) {
 }
 
-void Pawn::update(float delta) {
-  if (pickedPiece_) {
-    showMoves();
+std::vector<vec2i> &Pawn::getPossibleMoves(vec2i currentPos) {
+  static bool isOnTop = currentPos.y < 2;
+  int spacing = isOnTop ? 1 : -1;
+  if (isMoved_) {
+    possibleMoves_.push_back(vec2i({currentPos.x, currentPos.y + spacing}));
   } else {
-    clearMoves();
+    possibleMoves_.push_back(vec2i({currentPos.x, currentPos.y + spacing}));
+    possibleMoves_.push_back(vec2i({currentPos.x, possibleMoves_.back().y + spacing}));
   }
+  return possibleMoves_;
 }
-
-void Pawn::showMoves() {
-  circleShapes_.clear();
-  if (pickedPiece_) {
-//    if(Board::getByIndex(pickedPiece_->getBoardPos().x,pickedPiece_->getBoardPos().y - (pickedPiece_->getType() == PieceType::whitePawn? -1 : 1)) == 0 && ) {
-//
-//    }
-    if (!isMoved_) {
-      circleShapes_.push_back(new sf::CircleShape(50));
-      circleShapes_.push_back(new sf::CircleShape(50));
-    } else {
-      circleShapes_.clear();
-      circleShapes_.push_back(new sf::CircleShape(50));
-    }
-
-    float spacingWhite = -150.0f;;
-    float spacingBlack = 50.0f;;
-
-    for (auto &c : circleShapes_) {
-      c->setPosition(pickedPiece_->getPosition().x - 50.0f, pickedPiece_->getPosition().y + (pickedPiece_->getType() == PieceType::whitePawn ? spacingWhite : spacingBlack));
-      c->setFillColor(sf::Color(0, 0, 0, 150));
-        spacingWhite -= 100.0f;
-        spacingBlack += 100.0f;
-      }
-    }
-  }

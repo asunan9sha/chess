@@ -1,12 +1,15 @@
+#include <iostream>
 #include "cell.hpp"
 #include "board.hpp"
 #include "renderers/masterrenderer.hpp"
 
-Cell::Cell(std::unique_ptr<Piece> piece, const vec2 &pos, bool isWhite)
-    : isWhite_(isWhite), piece_(std::move(piece)){
+Cell::Cell(std::shared_ptr<Piece> piece, const vec2 &pos, bool isWhite)
+    : isWhite_(isWhite), piece_(std::move(piece)) {
   setPosition(pos);
   setSize({Board::CELL_SIZE, Board::CELL_SIZE});
-  setFillColor(isWhite ? sf::Color::White : sf::Color::Green);
+  originalColor_ = isWhite ? sf::Color::White : sf::Color::Cyan;
+  setFillColor(originalColor_);
+
   if (piece_) {
     piece_->setPosition(pos);
     isPiecePlaced_ = true;
@@ -23,6 +26,19 @@ void Cell::render(MasterRenderer &renderer) {
 }
 
 bool Cell::getPieceColor() {
-  const int pieceType = static_cast<int>(this->getPiece().getType());
+  const int pieceType = static_cast<int>(this->getPiece()->getType());
   return pieceType <= 6;
+}
+
+bool Cell::isPeacePlaced() const {
+  return (bool)piece_;
+}
+
+void Cell::moveTo(Cell &targetCell) {
+  if(!piece_){
+    return;
+  }
+  targetCell.piece_ = std::move(piece_);
+  targetCell.piece_->setPosition(targetCell.getPosition());
+  piece_ = std::shared_ptr<Piece>();
 }

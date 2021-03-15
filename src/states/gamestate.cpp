@@ -9,25 +9,11 @@
 GameState::GameState(Application *app) :
     BaseState(app) {
 
-  board_ = new Board({0.0f, 0.0f}, {800.0f, 800.0f}, ResourceHolder::getTexture("board.png"), 0);
-}
-
-GameState::~GameState() {
+  board_ = std::make_unique<Board>();
 }
 
 void GameState::render(MasterRenderer &renderer) {
-  renderer.submit(*board_);
-
-  for (const auto &p : board_->pieces_) {
-    renderer.submit(*p);
-  }
-  auto picked = Piece::getPickedPiece();
-  if(picked){
-    std::cout<<"picked piece = "<<static_cast<int>(picked->getType())<<std::endl;
-    for(const auto &c: picked->getCircles()){
-      renderer.submit(*c);
-    }
-  }
+  board_->render(renderer);
 }
 
 void GameState::update(float delta) {

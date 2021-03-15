@@ -8,23 +8,27 @@
 class Cell : public GameObject {
 public:
   Cell() = default;
-  Cell(std::unique_ptr<Piece> piece, const vec2 &pos, bool isWhite);
+  Cell(std::shared_ptr<Piece> piece, const vec2 &pos, bool isWhite);
   void render(MasterRenderer &renderer) override;
-  void input(const sf::Event &event) override {}
-  void update(float delta) override {}
+  void input(const sf::Event &event) override { }
+  void update(float delta) override { }
 
-  Piece &getPiece() { return *piece_; }
-  const Piece &getPiece() const { return *piece_; }
+  void moveTo(Cell &targetCell);
+  std::shared_ptr<Piece> &getPiece() { return piece_; }
+  const std::shared_ptr<Piece> &getPiece() const { return piece_; }
+  inline sf::Color getOriginalColor() const { return originalColor_; }
 
   bool getPieceColor();
-  inline bool isPeacePlaced() const { return isPiecePlaced_;}
+  bool isPeacePlaced() const;
+  inline void setPiece(bool isPeacePlaced) { isPiecePlaced_ = isPeacePlaced; }
 
   bool isWhite() const { return isWhite_; }
 
 private:
   bool isWhite_ = true;
-  std::unique_ptr<Piece> piece_;
+  std::shared_ptr<Piece> piece_;
   bool isPiecePlaced_;
+  sf::Color originalColor_;
 };
 
 

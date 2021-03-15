@@ -7,8 +7,8 @@
 class Knight : public Piece {
 public:
   explicit Knight(PieceType type);
-  void showMoves() override {}
-  void clearMoves() override {}
+
+  std::vector<vec2i> &getPossibleMoves(vec2i currentPos) override;
 };
 
 

@@ -7,8 +7,8 @@
 class King : public Piece {
 public:
   explicit King(PieceType type);
-  void showMoves() override {}
-  void clearMoves() override {}
+
+  std::vector<vec2i> &getPossibleMoves(vec2i currentPos) override;
 };
 
 

@@ -8,8 +8,10 @@ class Pawn : public Piece {
 public:
   explicit Pawn(PieceType type);
 
-  void update(float delta) override;
-  void showMoves() override;
+  std::vector<vec2i> &getPossibleMoves(vec2i currentPos) override;
+
+private:
+  vec2i startingPos_;
 };
 
 

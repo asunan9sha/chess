@@ -8,8 +8,7 @@
 #include "app/window.hpp"
 
 enum class PieceType {
-  none = 0,
-  whitePawn,
+  whitePawn = 0,
   whiteKnight,
   whiteBishop,
   whiteRook,
@@ -29,29 +28,27 @@ public:
   explicit Piece(PieceType type, const sf::IntRect &rect);
 
   void render(MasterRenderer &renderer) override;
-  void input(const sf::Event &event) override;
+  void input(const sf::Event &event) override { }
   void update(float delta) override { }
+  void copy(const Piece &other);
 
-  virtual void showMoves() = 0;
-  virtual void clearMoves();
+  virtual std::vector<vec2i> &getPossibleMoves(vec2i currentPos) = 0;
 
-  virtual inline PieceType getType() const { return pieceType_; }
-  inline std::vector<sf::CircleShape *> getCircles() { return circleShapes_; }
-  inline  Piece* getPickedPiece() { return pickedPiece_; }
+  inline PieceType getType() const { return pieceType_; }
 
-  inline vec2i getBoardPos() { return boardPos_;}
+  void pick();
+  void unpick();
 
 private:
   PieceType pieceType_;
 
-  static constexpr const char* ATLAS = "pieces.png";
+  static constexpr const char *ATLAS = "pieces.png";
 
 protected:
-  std::vector<sf::CircleShape *> circleShapes_;
-  vec2i boardPos_;
+  std::vector<vec2i> possibleMoves_;
 
   bool isMoved_;
-  Piece *pickedPiece_;
+  bool isPicked_;
 };
 
 
