@@ -18,16 +18,13 @@ public:
   const std::shared_ptr<Piece> &getPiece() const { return piece_; }
   inline sf::Color getOriginalColor() const { return originalColor_; }
 
-  bool getPieceColor();
   bool isPeacePlaced() const;
-  inline void setPiece(bool isPeacePlaced) { isPiecePlaced_ = isPeacePlaced; }
 
   bool isWhite() const { return isWhite_; }
 
 private:
   bool isWhite_ = true;
   std::shared_ptr<Piece> piece_;
-  bool isPiecePlaced_;
   sf::Color originalColor_;
 };
 

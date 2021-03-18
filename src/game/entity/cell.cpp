@@ -12,9 +12,6 @@ Cell::Cell(std::shared_ptr<Piece> piece, const vec2 &pos, bool isWhite)
 
   if (piece_) {
     piece_->setPosition(pos);
-    isPiecePlaced_ = true;
-  } else {
-    isPiecePlaced_ = false;
   }
 }
 
@@ -23,11 +20,6 @@ void Cell::render(MasterRenderer &renderer) {
   if (piece_) {
     piece_->render(renderer);
   }
-}
-
-bool Cell::getPieceColor() {
-  const int pieceType = static_cast<int>(this->getPiece()->getType());
-  return pieceType <= 6;
 }
 
 bool Cell::isPeacePlaced() const {

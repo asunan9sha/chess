@@ -32,12 +32,13 @@ public:
   void update(float delta) override { }
   void copy(const Piece &other);
 
-  virtual std::vector<vec2i> &getPossibleMoves(vec2i currentPos) = 0;
+  virtual std::vector<vec2> &getPossibleMoves() = 0;
 
-  inline PieceType getType() const { return pieceType_; }
+  void pieceMoved() { isMoved_ = true; }
+  void setOnTop(bool isOnTop) { isOnTop_ = isOnTop; }
 
-  void pick();
-  void unpick();
+  bool isWhite() const { return isWhite_; }
+  PieceType getType() const { return pieceType_; }
 
 private:
   PieceType pieceType_;
@@ -45,10 +46,11 @@ private:
   static constexpr const char *ATLAS = "pieces.png";
 
 protected:
-  std::vector<vec2i> possibleMoves_;
+  std::vector<vec2> possibleMoves_;
 
   bool isMoved_;
-  bool isPicked_;
+  bool isOnTop_;
+  bool isWhite_;
 };
 
 
