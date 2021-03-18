@@ -12,6 +12,7 @@ Cell::Cell(std::shared_ptr<Piece> piece, const vec2 &pos, bool isWhite)
 
   if (piece_) {
     piece_->setPosition(pos);
+    isWhite_ = isWhite;
   }
 }
 
