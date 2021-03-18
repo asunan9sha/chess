@@ -8,10 +8,7 @@ class Pawn : public Piece {
 public:
   explicit Pawn(PieceType type);
 
-  std::vector<vec2i> &getPossibleMoves(vec2i currentPos) override;
-
-private:
-  vec2i startingPos_;
+  std::vector<vec2> &getPossibleMoves() override;
 };
 
 
