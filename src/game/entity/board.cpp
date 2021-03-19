@@ -144,17 +144,44 @@ void Board::tryToMove(vec2 piecePos, vec2 destination) {
   const int x = static_cast<int>(piecePos.x / CELL_SIZE);
   const int y = static_cast<int>(piecePos.y / CELL_SIZE);
 
+  const auto type = board_[y][x]->getPiece()->getType();
+
+//  for (const auto &m :  board_[piecePos.y / CELL_SIZE][piecePos.x / CELL_SIZE]->getPiece()->getPossibleMoves()) {
+//    std::cout << "x move = " << m.x << " y move = " << m.y << std::endl;
+//  }
+//  std::cout << "-------------------------" << std::endl;
+
+  if (type == PieceType::whitePawn || type == PieceType::blackPawn) {
+    pawnMoves(piecePos, destination);
+  } else if (type == PieceType::whiteKnight || type == PieceType::blackKnight) {
+    knightMoves(piecePos, destination);
+  } else if (type == PieceType::whiteRook || type == PieceType::blackRook) {
+    rookMoves(piecePos, destination);
+  }
+}
+
+void Board::movePiece(vec2i piecePos, vec2i destination) {
+  board_[piecePos.x][piecePos.y]->moveTo(*board_[destination.y][destination.x]);
+  board_[destination.y][destination.x]->getPiece()->pieceMoved();
+  board_[destination.y][destination.x]->getPiece()->getPossibleMoves().clear();
+
+  if (board_[destination.y][destination.x]->getPiece()->getType() == PieceType::whitePawn ||
+      board_[destination.y][destination.x]->getPiece()->getType() == PieceType::blackPawn) {
+    if (destination.y == 0 || destination.y == 7) {
+      board_[destination.y][destination.x]->getPiece() = std::move(std::make_shared<Queen>(
+          static_cast<int>(board_[destination.y][destination.x]->getPiece()->getType()) < 5 ? PieceType::whiteQueen
+                                                                                            : PieceType::blackQueen));
+      board_[destination.y][destination.x]->getPiece()->setPosition(destination.x * 100.0f, destination.y * 100.0f);
+    }
+  }
+}
+
+void Board::pawnMoves(vec2 piecePos, vec2 destination) {
+  const int x = static_cast<int>(piecePos.x / CELL_SIZE);
+  const int y = static_cast<int>(piecePos.y / CELL_SIZE);
+
   const int dx = static_cast<int>((destination.x / CELL_SIZE));
   const int dy = static_cast<int>(destination.y / CELL_SIZE);
-
-//  if (pickedCell_->getPiece()->getType() == PieceType::blackPawn ||
-//      pickedCell_->getPiece()->getType() == PieceType::whitePawn) {
-//    board_[y][x]->getPiece()->getPossibleMoves().push_back(y > 0 ? )
-//  }
-  for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
-    std::cout << "x move = " << m.x << " y move = " << m.y << std::endl;
-  }
-  std::cout << "----------------------------------------------------------" << std::endl;
 
   for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
     if (board_[y][x]->getPiece()->getType() == PieceType::whitePawn ||
@@ -172,39 +199,119 @@ void Board::tryToMove(vec2 piecePos, vec2 destination) {
         movePiece({y, x}, {dx, dy});
         return;
       }
-    } else if (board_[y][x]->getPiece()->getType() == PieceType::whiteKnight ||
-               board_[y][x]->getPiece()->getType() == PieceType::blackKnight) {
-      if (m.x > 700 || m.x < 0 || m.y > 700 || m.y < 0) {
-        continue;
-      }
-      if(board_[dy][dx]->getPosition() != m){
-        continue;
-      }
-      if(!board_[dy][dx]->isPeacePlaced()){
-        movePiece({y, x}, {dx, dy});
-        return;
-      }
-      if (board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
-        movePiece({y, x}, {dx, dy});
-        return;
-      }
     }
   }
 }
 
-void Board::movePiece(vec2i piecePos, vec2i destination) {
-  board_[piecePos.x][piecePos.y]->moveTo(*board_[destination.y][destination.x]);
-  board_[destination.y][destination.x]->getPiece()->pieceMoved();
-  board_[destination.y][destination.x]->getPiece()->getPossibleMoves().clear();
-  if (board_[destination.y][destination.x]->getPiece()->getType() == PieceType::whitePawn ||
-      board_[destination.y][destination.x]->getPiece()->getType() == PieceType::blackPawn) {
-    if (destination.y == 0 || destination.y == 7) {
-      board_[destination.y][destination.x]->getPiece() = std::move(std::make_shared<Queen>(
-          static_cast<int>(board_[destination.y][destination.x]->getPiece()->getType()) < 5 ? PieceType::whiteQueen
-                                                                                            : PieceType::blackQueen));
-      board_[destination.y][destination.x]->getPiece()->setPosition(destination.x * 100.0f, destination.y * 100.0f);
+void Board::rookMoves(vec2 piecePos, vec2 destination) {
+  const int x = static_cast<int>(piecePos.x / CELL_SIZE);
+  const int y = static_cast<int>(piecePos.y / CELL_SIZE);
+
+  const int dx = static_cast<int>((destination.x / CELL_SIZE));
+  const int dy = static_cast<int>(destination.y / CELL_SIZE);
+
+  for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
+    if (board_[dy][dx]->getPosition() != m) {
+      continue;
     }
+    if (x != dx) {
+      if (dx - x > 0 && dx - x != 1) {
+        int tempX = static_cast<int>((board_[y][x]->getPiece()->getPosition().x + CELL_SIZE) / CELL_SIZE);
+        while (tempX != dx) {
+          if (!board_[dy][tempX]->isPeacePlaced()) {
+            tempX += 1;
+            continue;
+          } else {
+            return;
+          }
+        }
+        if (tempX == dx) {
+          movePiece({y, x}, {dx, dy});
+          return;
+        }
+      } else if (abs(dx - x) != 1) {
+        {
+          int tempX = static_cast<int>((board_[y][x]->getPiece()->getPosition().x - CELL_SIZE) / CELL_SIZE);
+          while (tempX != dx) {
+            if (!board_[dy][tempX]->isPeacePlaced()) {
+              tempX -= 1;
+              continue;
+            } else {
+              return;
+            }
+          }
+          if (tempX == dx) {
+            movePiece({y, x}, {dx, dy});
+            return;
+          }
+        }
+      }
+    } else if (y != dy) {
+      if (dy - y > 0 && dy - y != 1) {
+        int tempY = static_cast<int>((board_[y][x]->getPiece()->getPosition().y + CELL_SIZE) / CELL_SIZE);
+        while (tempY != dy) {
+          if (!board_[tempY][dx]->isPeacePlaced()) {
+            tempY += 1;
+            continue;
+          } else {
+            return;
+          }
+        }
+        if (tempY == dy) {
+          movePiece({y, x}, {dx, dy});
+          return;
+        }
+      } else if(abs(dy - y) != 1) {
+        {
+          int tempY = static_cast<int>((board_[y][x]->getPiece()->getPosition().y - CELL_SIZE) / CELL_SIZE);
+          while (tempY != dy) {
+            if (!board_[tempY][dx]->isPeacePlaced()) {
+              tempY -= 1;
+              continue;
+            } else {
+              return;
+            }
+          }
+          if (tempY == dy) {
+            movePiece({y, x}, {dx, dy});
+            return;
+          }
+        }
+      }
+    }
+  }
+  if (!board_[dy][dx]->isPeacePlaced()) {
+    movePiece({y, x}, {dx, dy});
+    return;
+  }
+  if (board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
+    movePiece({y, x}, {dx, dy});
+    return;
   }
 }
 
-//std::cout << "moves for pawn = " << m.x << "moves for pawn = " << m.y << std::endl;
+
+void Board::knightMoves(vec2 piecePos, vec2 destination) {
+  const int x = static_cast<int>(piecePos.x / CELL_SIZE);
+  const int y = static_cast<int>(piecePos.y / CELL_SIZE);
+
+  const int dx = static_cast<int>((destination.x / CELL_SIZE));
+  const int dy = static_cast<int>(destination.y / CELL_SIZE);
+
+  for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
+    if (m.x > 700 || m.x < 0 || m.y > 700 || m.y < 0) {
+      continue;
+    }
+    if (board_[dy][dx]->getPosition() != m) {
+      continue;
+    }
+    if (!board_[dy][dx]->isPeacePlaced()) {
+      movePiece({y, x}, {dx, dy});
+      return;
+    }
+    if (board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
+      movePiece({y, x}, {dx, dy});
+      return;
+    }
+  }
+}
