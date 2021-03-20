@@ -17,11 +17,15 @@ public:
   Cell &getCell(size_t x, size_t y);
 
   void pawnMoves(vec2 piecePos, vec2 destination);
+  void queenMoves(vec2 piecePos, vec2 destination);
+  void bishopMoves(vec2 piecePos, vec2 destination);
+  void kingMoves(vec2 piecePos, vec2 destination);
   void rookMoves(vec2 piecePos, vec2 destination);
   void knightMoves(vec2 piecePos, vec2 destination);
   void tryToMove(vec2 piecePos, vec2 destination);
   void movePiece(vec2i piecePos, vec2i destination);
-  static float getCellSize() { return CELL_SIZE; }
+
+  bool isPieceBetween(vec2 piecePos, vec2 destination);
 
 private:
   void initBoard();
