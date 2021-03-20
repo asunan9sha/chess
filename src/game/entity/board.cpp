@@ -11,7 +11,7 @@
 #include "utils/assert.hpp"
 
 
-Board::Board() : pickedCell_(nullptr) {
+Board::Board() : pickedCell_(nullptr), isWhiteTurn_(true) {
   initBoard();
 
   for (size_t i = 0; i < BOARD_SIZE; i++) {
@@ -38,6 +38,9 @@ void Board::input(const sf::Event &event) {
       const int y = static_cast<int>(event.mouseButton.y / CELL_SIZE);
       if (event.mouseButton.button == sf::Mouse::Left) {
         if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE && getCell(x, y).isPeacePlaced() && !pickedCell_) {
+          if(getCell(x, y).getPiece()->isWhite() != isWhiteTurn_){
+            return;
+          }
           pickedCell_ = &getCell(x, y);
           pickedCell_->setFillColor(sf::Color::Green);
         } else if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE && pickedCell_) {
@@ -173,6 +176,7 @@ void Board::movePiece(vec2i piecePos, vec2i destination) {
       board_[destination.y][destination.x]->getPiece()->setPosition(destination.x * 100.0f, destination.y * 100.0f);
     }
   }
+  isWhiteTurn_ = !isWhiteTurn_;
 }
 
 void Board::pawnMoves(vec2 piecePos, vec2 destination) {

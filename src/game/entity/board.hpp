@@ -16,6 +16,9 @@ public:
 
   Cell &getCell(size_t x, size_t y);
 
+private:
+  void initBoard();
+
   void pawnMoves(vec2 piecePos, vec2 destination);
   void queenMoves(vec2 piecePos, vec2 destination);
   void bishopMoves(vec2 piecePos, vec2 destination);
@@ -25,13 +28,11 @@ public:
   void tryToMove(vec2 piecePos, vec2 destination);
   void movePiece(vec2i piecePos, vec2i destination);
 
-  bool isPieceBetween(vec2 piecePos, vec2 destination);
-
 private:
-  void initBoard();
-
   std::shared_ptr<Piece> getPieceByType(PieceType type) const;
   std::shared_ptr<Piece> getUniquePiece(size_t x, size_t y) const;
+
+  bool isPieceBetween(vec2 piecePos, vec2 destination);
 
 public:
   static constexpr const float CELL_SIZE = 100.0f;
@@ -40,6 +41,8 @@ public:
 private:
   std::array<std::array<std::unique_ptr<Cell>, BOARD_SIZE>, BOARD_SIZE> board_;
   Cell *pickedCell_;
+
+  bool isWhiteTurn_;
 };
 
 
