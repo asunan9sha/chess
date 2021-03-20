@@ -7,8 +7,7 @@
 class Bishop : public Piece {
 public:
   explicit Bishop(PieceType type);
-
-  std::vector<vec2i> &getPossibleMoves(vec2i currentPos) override;
+  std::vector<vec2> &getPossibleMoves() override;
 };
 
 
