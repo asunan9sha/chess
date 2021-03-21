@@ -38,7 +38,7 @@ void Board::input(const sf::Event &event) {
       const int y = static_cast<int>(event.mouseButton.y / CELL_SIZE);
       if (event.mouseButton.button == sf::Mouse::Left) {
         if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE && getCell(x, y).isPeacePlaced() && !pickedCell_) {
-          if(getCell(x, y).getPiece()->isWhite() != isWhiteTurn_){
+          if (getCell(x, y).getPiece()->isWhite() != isWhiteTurn_) {
             return;
           }
           pickedCell_ = &getCell(x, y);
@@ -159,6 +159,8 @@ void Board::tryToMove(vec2 piecePos, vec2 destination) {
     bishopMoves(piecePos, destination);
   } else if (type == PieceType::whiteQueen || type == PieceType::blackQueen) {
     queenMoves(piecePos, destination);
+  } else {
+    kingMoves(piecePos, destination);
   }
 }
 
@@ -214,7 +216,8 @@ void Board::rookMoves(vec2 piecePos, vec2 destination) {
   const int dy = static_cast<int>(destination.y / CELL_SIZE);
 
   for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
-    if (board_[dy][dx]->getPosition() != m || board_[dy][dx]->isPeacePlaced() && board_[y][x]->getPiece()->isWhite() ==board_[dy][dx]->getPiece()->isWhite()) {
+    if (board_[dy][dx]->getPosition() != m || board_[dy][dx]->isPeacePlaced() && board_[y][x]->getPiece()->isWhite() ==
+                                                                                 board_[dy][dx]->getPiece()->isWhite()) {
       continue;
     }
     std::cout << "is piece between " << isPieceBetween(piecePos, destination) << std::endl;
@@ -260,7 +263,8 @@ void Board::bishopMoves(vec2 piecePos, vec2 destination) {
   const int dy = static_cast<int>(destination.y / CELL_SIZE);
 
   for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
-    if (board_[dy][dx]->getPosition() != m || board_[dy][dx]->isPeacePlaced() && board_[y][x]->getPiece()->isWhite() ==board_[dy][dx]->getPiece()->isWhite()) {
+    if (board_[dy][dx]->getPosition() != m || board_[dy][dx]->isPeacePlaced() && board_[y][x]->getPiece()->isWhite() ==
+                                                                                 board_[dy][dx]->getPiece()->isWhite()) {
       continue;
     }
     if (!isPieceBetween(piecePos, destination)) {
@@ -308,10 +312,12 @@ bool Board::isPieceBetween(vec2 piecePos, vec2 destination) {
       return false;
     }
   } else if (x == dx) {
-    tempY = static_cast<int>((board_[y][x]->getPiece()->getPosition().y + (y < dy ? CELL_SIZE : -CELL_SIZE)) /CELL_SIZE);
+    tempY = static_cast<int>((board_[y][x]->getPiece()->getPosition().y + (y < dy ? CELL_SIZE : -CELL_SIZE)) /
+                             CELL_SIZE);
     tempX = static_cast<int>(board_[y][x]->getPiece()->getPosition().x / CELL_SIZE);
   } else {
-    tempX = static_cast<int>((board_[y][x]->getPiece()->getPosition().x + (x < dx ? CELL_SIZE : -CELL_SIZE)) /CELL_SIZE);
+    tempX = static_cast<int>((board_[y][x]->getPiece()->getPosition().x + (x < dx ? CELL_SIZE : -CELL_SIZE)) /
+                             CELL_SIZE);
     tempY = static_cast<int>(board_[y][x]->getPiece()->getPosition().y / CELL_SIZE);
   }
   while (tempX != dx || tempY != dy) {
@@ -325,5 +331,25 @@ bool Board::isPieceBetween(vec2 piecePos, vec2 destination) {
   }
   if (tempX == dx && tempY == dy) {
     return false;
+  }
+}
+
+void Board::kingMoves(vec2 piecePos, vec2 destination) {
+  const int x = static_cast<int>(piecePos.x / CELL_SIZE);
+  const int y = static_cast<int>(piecePos.y / CELL_SIZE);
+
+  const int dx = static_cast<int>((destination.x / CELL_SIZE));
+  const int dy = static_cast<int>(destination.y / CELL_SIZE);
+
+  if (abs(x - dx) > 1 || abs(y - dy) > 1) {
+    return;
+  }
+  if (board_[dy][dx]->isPeacePlaced() && board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
+    movePiece({y, x}, {dx, dy});
+    return;
+  }
+  if (!board_[dy][dx]->isPeacePlaced()) {
+    movePiece({y, x}, {dx, dy});
+    return;
   }
 }

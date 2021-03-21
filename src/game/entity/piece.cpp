@@ -2,7 +2,6 @@
 #include "piece.hpp"
 #include "renderers/masterrenderer.hpp"
 #include "board.hpp"
-#include "iostream"
 
 
 Piece::Piece(PieceType type, const sf::IntRect &rect)
