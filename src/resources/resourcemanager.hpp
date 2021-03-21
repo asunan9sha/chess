@@ -2,8 +2,7 @@
 #ifndef CHESS_RESOURCEMANAGER_HPP
 #define CHESS_RESOURCEMANAGER_HPP
 
-#include <unordered_map>
-#include <string>
+#include "pch.hpp"
 
 template<typename R>
 class ResourceManager {
