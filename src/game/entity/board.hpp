@@ -2,6 +2,7 @@
 #define CHESS_BOARD_HPP
 
 #include <array>
+#include <SFML/Graphics/Text.hpp>
 #include "gameobject.hpp"
 #include "piece.hpp"
 #include "cell.hpp"
@@ -33,6 +34,9 @@ private:
   std::shared_ptr<Piece> getUniquePiece(size_t x, size_t y) const;
 
   bool isPieceBetween(vec2 piecePos, vec2 destination);
+  bool isKingChecked();
+
+  std::vector<vec2> findPiecePos(PieceType type);
 
 public:
   static constexpr const float CELL_SIZE = 100.0f;

@@ -11,14 +11,15 @@ enum class PieceType {
   whiteKnight,
   whiteBishop,
   whiteRook,
-  whiteKing,
   whiteQueen,
+  whiteKing,
   blackPawn,
   blackKnight,
   blackBishop,
   blackRook,
-  blackKing,
-  blackQueen
+  blackQueen,
+  blackKing
+
 };
 
 
