@@ -172,6 +172,7 @@ void Board::tryToMove(vec2 piecePos, vec2 destination) {
 }
 
 void Board::movePiece(vec2i piecePos, vec2i destination) {
+  auto tempPiece = *board_[destination.y][destination.x];
   board_[piecePos.x][piecePos.y]->moveTo(*board_[destination.y][destination.x]);
   board_[destination.y][destination.x]->getPiece()->pieceMoved(true);
   board_[destination.y][destination.x]->getPiece()->getPossibleMoves().clear();
@@ -180,6 +181,7 @@ void Board::movePiece(vec2i piecePos, vec2i destination) {
     board_[destination.y][destination.x]->moveTo(*board_[piecePos.x][piecePos.y]);
     board_[piecePos.x][piecePos.y]->getPiece()->pieceMoved(false);
     board_[piecePos.x][piecePos.y]->getPiece()->getPossibleMoves().clear();
+    tempPiece.moveTo(*board_[destination.y][destination.x]);
     return;
   }
 
@@ -375,6 +377,12 @@ bool Board::isKingChecked() {
 
   if (isWhiteTurn_) {
     kingPos = findPiecePos(PieceType::whiteKing).back();
+    vec2 blackKing = findPiecePos(PieceType::blackKing).back();
+    if(sqrt((kingPos.x - blackKing.x) * (kingPos.x - blackKing.x) + (kingPos.y - blackKing.y) * (kingPos.y - blackKing.y)) < 200.0f){
+      return true;
+    }
+    std::cout<<"distanse between kings = "<<sqrt((kingPos.x - blackKing.x) * (kingPos.x - blackKing.x) + (kingPos.y - blackKing.y) * (kingPos.y - blackKing.y));
+    if(abs(kingPos.x - blackKing.x ))
     for (size_t i = 0; i < BOARD_SIZE; i++) {
       for (size_t j = 0; j < BOARD_SIZE; j++) {
         if (!board_[j][i]->isPeacePlaced()) {
@@ -387,6 +395,10 @@ bool Board::isKingChecked() {
     }
   } else {
     kingPos = findPiecePos(PieceType::blackKing).back();
+    vec2 whiteKing = findPiecePos(PieceType::whiteKing).back();
+    if(sqrt((kingPos.x - whiteKing.x) * (kingPos.x - whiteKing.x) + (kingPos.y - whiteKing.y) * (kingPos.y - whiteKing.y)) < 200.0f){
+      return true;
+    }
     for (size_t i = 0; i < BOARD_SIZE; i++) {
       for (size_t j = 0; j < BOARD_SIZE; j++) {
         if (!board_[j][i]->isPeacePlaced()) {
@@ -403,14 +415,6 @@ bool Board::isKingChecked() {
       if (m != kingPos) {
         continue;
       }
-
-      if (board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::blackPawn ||
-          board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::whitePawn) {
-        std::cout << "king pos X = " << kingPos.x << " " << "king pos Y = " << kingPos.y << std::endl;
-        std::cout << "M pos X = " << m.x << " " << "M pos Y = " << m.y << std::endl;
-        std::cout << "piece type = "<< static_cast<int>(board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType());
-      }
-
       if (board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::blackPawn ||
           board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::whitePawn) {
         if (m.x != p.x) {
