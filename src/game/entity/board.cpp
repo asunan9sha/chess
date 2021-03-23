@@ -197,21 +197,18 @@ void Board::pawnMoves(vec2 piecePos, vec2 destination) {
   const int dy = static_cast<int>(destination.y / CELL_SIZE);
 
   for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
-    if (board_[y][x]->getPiece()->getType() == PieceType::whitePawn ||
-        board_[y][x]->getPiece()->getType() == PieceType::blackPawn) {
-      if (board_[m.y / CELL_SIZE][m.x / CELL_SIZE]->isPeacePlaced() && dx != x &&
-          board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
-        movePiece({y, x}, {dx, dy});
-        return;
-      }
-      if (getCell(m.x / CELL_SIZE, m.y / CELL_SIZE).isPeacePlaced()) {
-        board_[y][x]->getPiece()->getPossibleMoves().clear();
-        return;
-      }
-      if (board_[dy][dx]->getPosition() == m && m.x / CELL_SIZE == x) {
-        movePiece({y, x}, {dx, dy});
-        return;
-      }
+    if (board_[m.y / CELL_SIZE][m.x / CELL_SIZE]->isPeacePlaced() && dx != x &&
+        board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
+      movePiece({y, x}, {dx, dy});
+      return;
+    }
+    if (getCell(m.x / CELL_SIZE, m.y / CELL_SIZE).isPeacePlaced()) {
+      board_[y][x]->getPiece()->getPossibleMoves().clear();
+      return;
+    }
+    if (board_[dy][dx]->getPosition() == m && m.x / CELL_SIZE == x) {
+      movePiece({y, x}, {dx, dy});
+      return;
     }
   }
 }
@@ -371,10 +368,10 @@ bool Board::isKingChecked() {
     kingPos = findPiecePos(PieceType::whiteKing).back();
     for (size_t i = 0; i < BOARD_SIZE; i++) {
       for (size_t j = 0; j < BOARD_SIZE; j++) {
-        if(!board_[j][i]->isPeacePlaced()){
+        if (!board_[j][i]->isPeacePlaced()) {
           continue;
         }
-        if(static_cast<int>(board_[j][i]->getPiece()->getType()) >=8 && static_cast<int>(board_[j][i]->getPiece()->getType()) <=11){
+        if (static_cast<int>(board_[j][i]->getPiece()->getType()) >= 6) {
           chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
         }
       }
@@ -383,21 +380,30 @@ bool Board::isKingChecked() {
     kingPos = findPiecePos(PieceType::blackKing).back();
     for (size_t i = 0; i < BOARD_SIZE; i++) {
       for (size_t j = 0; j < BOARD_SIZE; j++) {
-        if(!board_[j][i]->isPeacePlaced()){
+        if (!board_[j][i]->isPeacePlaced()) {
           continue;
         }
-        if(static_cast<int>(board_[j][i]->getPiece()->getType()) >=2 && static_cast<int>(board_[j][i]->getPiece()->getType()) <=4){
+        if (static_cast<int>(board_[j][i]->getPiece()->getType()) <= 5) {
           chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
         }
       }
     }
   }
-  for(const auto &p : chekingPieces) {
+  for (const auto &p : chekingPieces) {
     for (const auto &m : board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getPossibleMoves()) {
       if (m != kingPos) {
         continue;
       }
-      std::cout<<"king pos x ="<<kingPos.x<<" "<<"king pos y ="<<kingPos.y<<std::endl;
+      std::cout << "piece type = " << static_cast<int>(board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType())
+                << std::endl;
+      if (board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::blackPawn ||
+          board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::whitePawn) {
+        return true;
+      }
+      if (board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::blackKnight ||
+          board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::whiteKnight) {
+        return true;
+      }
       if (!isPieceBetween(kingPos, p)) {
         return true;
       } else {
