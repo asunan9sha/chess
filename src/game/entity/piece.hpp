@@ -33,7 +33,7 @@ public:
 
   virtual std::vector<vec2> &getPossibleMoves() = 0;
 
-  void pieceMoved() { isMoved_ = true; }
+  void pieceMoved(bool isMoved) { isMoved_ = isMoved; }
   void setOnTop(bool isOnTop) { isOnTop_ = isOnTop; }
 
   bool isWhite() const { return isWhite_; }

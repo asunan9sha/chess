@@ -10,7 +10,7 @@ std::vector<vec2> &Pawn::getPossibleMoves() {
     return possibleMoves_;
   }
 
-  int spacing = isOnTop_ ? 100.0f : -100.0f;
+  float spacing = isOnTop_ ? 100.0f : -100.0f;
 
   if (isMoved_) {
     possibleMoves_.push_back(vec2({getPosition().x, getPosition().y + spacing}));
