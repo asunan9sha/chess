@@ -67,6 +67,17 @@ void Board::update(float delta) {
   if (pickedCell_) {
     pickedCell_->getPiece()->update(delta);
   }
+  if (isKingChecked()) {
+    if (isCheckmate()) {
+      std::cout << "game over" << std::endl;
+      return;
+    }
+    std::cout << "king is checked" << std::endl;
+    std::cout << "------------------------------" << std::endl;
+  } else {
+    std::cout << "king is NOT checked" << std::endl;
+    std::cout << "------------------------------" << std::endl;
+  }
   for (size_t i = 0; i < BOARD_SIZE; i++) {
     for (size_t j = 0; j < BOARD_SIZE; j++) {
     }
@@ -162,13 +173,6 @@ void Board::tryToMove(vec2 piecePos, vec2 destination) {
   } else {
     kingMoves(piecePos, destination);
   }
-  if (isKingChecked()) {
-    std::cout << "king is checked" << std::endl;
-    std::cout << "------------------------------" << std::endl;
-  } else {
-    std::cout << "king is NOT checked" << std::endl;
-    std::cout << "------------------------------" << std::endl;
-  }
 }
 
 void Board::movePiece(vec2i piecePos, vec2i destination) {
@@ -205,10 +209,13 @@ void Board::pawnMoves(vec2 piecePos, vec2 destination) {
   const int dx = static_cast<int>((destination.x / CELL_SIZE));
   const int dy = static_cast<int>(destination.y / CELL_SIZE);
 
-  for (const auto &m :  board_[y][x]->getPiece()->getPossibleMoves()) {
+  const auto moves = board_[y][x]->getPiece()->getPossibleMoves();
+
+  for (const auto &m :  moves) {
     if (m != destination) {
       continue;
     }
+    auto moves2 = board_[y][x]->getPiece()->getPossibleMoves();
     if (board_[m.y / CELL_SIZE][m.x / CELL_SIZE]->isPeacePlaced()) {
       if (m.x != board_[y][x]->getPiece()->getPosition().x &&
           board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
@@ -221,6 +228,7 @@ void Board::pawnMoves(vec2 piecePos, vec2 destination) {
       return;
     }
   }
+  board_[y][x]->getPiece()->getPossibleMoves().clear();
 }
 
 void Board::rookMoves(vec2 piecePos, vec2 destination) {
@@ -357,15 +365,11 @@ void Board::kingMoves(vec2 piecePos, vec2 destination) {
   const int dx = static_cast<int>((destination.x / CELL_SIZE));
   const int dy = static_cast<int>(destination.y / CELL_SIZE);
 
-  if (abs(x - dx) > 1 || abs(y - dy) > 1) {
-    return;
-  }
-  if (board_[dy][dx]->isPeacePlaced() &&
-      board_[y][x]->getPiece()->isWhite() != board_[dy][dx]->getPiece()->isWhite()) {
-    movePiece({y, x}, {dx, dy});
-    return;
-  }
-  if (!board_[dy][dx]->isPeacePlaced()) {
+  for (const auto &m : board_[y][x]->getPiece()->getPossibleMoves()) {
+    if (board_[dy][dx]->getPosition() != m || board_[dy][dx]->isPeacePlaced() && board_[y][x]->getPiece()->isWhite() ==
+                                                                                 board_[dy][dx]->getPiece()->isWhite()) {
+      continue;
+    }
     movePiece({y, x}, {dx, dy});
     return;
   }
@@ -376,13 +380,8 @@ bool Board::isKingChecked() {
   std::vector<vec2> chekingPieces;
 
   if (isWhiteTurn_) {
-    kingPos = findPiecePos(PieceType::whiteKing).back();
-    vec2 blackKing = findPiecePos(PieceType::blackKing).back();
-    if(sqrt((kingPos.x - blackKing.x) * (kingPos.x - blackKing.x) + (kingPos.y - blackKing.y) * (kingPos.y - blackKing.y)) < 200.0f){
-      return true;
-    }
-    std::cout<<"distanse between kings = "<<sqrt((kingPos.x - blackKing.x) * (kingPos.x - blackKing.x) + (kingPos.y - blackKing.y) * (kingPos.y - blackKing.y));
-    if(abs(kingPos.x - blackKing.x ))
+    kingPos = findKingPos(PieceType::whiteKing);
+
     for (size_t i = 0; i < BOARD_SIZE; i++) {
       for (size_t j = 0; j < BOARD_SIZE; j++) {
         if (!board_[j][i]->isPeacePlaced()) {
@@ -394,11 +393,8 @@ bool Board::isKingChecked() {
       }
     }
   } else {
-    kingPos = findPiecePos(PieceType::blackKing).back();
-    vec2 whiteKing = findPiecePos(PieceType::whiteKing).back();
-    if(sqrt((kingPos.x - whiteKing.x) * (kingPos.x - whiteKing.x) + (kingPos.y - whiteKing.y) * (kingPos.y - whiteKing.y)) < 200.0f){
-      return true;
-    }
+    kingPos = findKingPos(PieceType::blackKing);
+
     for (size_t i = 0; i < BOARD_SIZE; i++) {
       for (size_t j = 0; j < BOARD_SIZE; j++) {
         if (!board_[j][i]->isPeacePlaced()) {
@@ -437,14 +433,56 @@ bool Board::isKingChecked() {
   return false;
 }
 
-std::vector<vec2> Board::findPiecePos(PieceType type) {
-  std::vector<vec2> temp;
+vec2 Board::findKingPos(PieceType type) {
   for (size_t i = 0; i < BOARD_SIZE; i++) {
     for (size_t j = 0; j < BOARD_SIZE; j++) {
       if (board_[j][i]->isPeacePlaced() && board_[j][i]->getPiece()->getType() == type) {
-        temp.push_back(board_[j][i]->getPiece()->getPosition());
+        return board_[j][i]->getPiece()->getPosition();
       }
     }
   }
-  return temp;
+}
+
+bool Board::isCheckmate() {
+  Cell tempPiece;
+  std::vector<vec2> chekingPieces;
+  if (isWhiteTurn_) {
+
+    for (size_t i = 0; i < BOARD_SIZE; i++) {
+      for (size_t j = 0; j < BOARD_SIZE; j++) {
+        if (!board_[j][i]->isPeacePlaced()) {
+          continue;
+        }
+        if (static_cast<int>(board_[j][i]->getPiece()->getType()) <= 5) {
+          chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
+        }
+      }
+    }
+  } else {
+
+    for (size_t i = 0; i < BOARD_SIZE; i++) {
+      for (size_t j = 0; j < BOARD_SIZE; j++) {
+        if (!board_[j][i]->isPeacePlaced()) {
+          continue;
+        }
+        if (static_cast<int>(board_[j][i]->getPiece()->getType()) >= 6) {
+          chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
+        }
+      }
+    }
+  }
+  for (auto &p : chekingPieces) {
+    for (auto &m : board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getPossibleMoves()) {
+      if(m.x > 700 || m.x < 0 || m.y > 700 || m.x < 0){
+        continue;
+      }
+      tryToMove(p, m);
+      if (!isKingChecked()) {
+        return false;
+      } else {
+        continue;
+      }
+    }
+  }
+  return true;
 }

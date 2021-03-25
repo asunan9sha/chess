@@ -6,6 +6,8 @@ Knight::Knight(PieceType type)
 }
 
 std::vector<vec2> &Knight::getPossibleMoves() {
+  possibleMoves_.clear();
+
   const float longSpacing = 200.0f;
   const float shortSpacing = 100.0f;
 

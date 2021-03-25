@@ -35,8 +35,9 @@ private:
 
   bool isPieceBetween(vec2 piecePos, vec2 destination);
   bool isKingChecked();
+  bool isCheckmate();
 
-  std::vector<vec2> findPiecePos(PieceType type);
+  vec2 findKingPos(PieceType type);
 
 public:
   static constexpr const float CELL_SIZE = 100.0f;

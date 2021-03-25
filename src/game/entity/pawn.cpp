@@ -3,14 +3,17 @@
 Pawn::Pawn(PieceType type)
     : Piece(type, type == PieceType::whitePawn ? sf::IntRect(1000, 0, 200, 200) : sf::IntRect(1000, 200, 200, 200)) {
   isWhite_ = type == PieceType::whitePawn;
+  getPossibleMoves();
 }
 
 std::vector<vec2> &Pawn::getPossibleMoves() {
+  possibleMoves_.clear();
+
   if(getPosition().y == 0){
     return possibleMoves_;
   }
 
-  float spacing = isOnTop_ ? 100.0f : -100.0f;
+  const float spacing = isOnTop_ ? 100.0f : -100.0f;
 
   if (isMoved_) {
     possibleMoves_.push_back(vec2({getPosition().x, getPosition().y + spacing}));

@@ -5,6 +5,8 @@ Queen::Queen(PieceType type)
   isWhite_ = type == PieceType::whiteQueen;
 }
 std::vector<vec2> &Queen::getPossibleMoves() {
+  possibleMoves_.clear();
+
   const float spacing = 100.0f;
 
   float tempX = getPosition().x;

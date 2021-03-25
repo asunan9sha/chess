@@ -7,6 +7,8 @@ Rook::Rook(PieceType type)
   isWhite_ = type == PieceType::whiteRook;
 }
 std::vector<vec2> &Rook::getPossibleMoves() {
+  possibleMoves_.clear();
+
   const float x = getPosition().x;
   const float y = getPosition().y;
   const float spacing = 100.0f;

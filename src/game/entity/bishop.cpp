@@ -6,6 +6,8 @@ Bishop::Bishop(PieceType type)
 }
 
 std::vector<vec2> &Bishop::getPossibleMoves() {
+  possibleMoves_.clear();
+
   const float spacing = 100.0f;
 
   float tempX = getPosition().x;
