@@ -18,6 +18,10 @@ void GameState::render(MasterRenderer &renderer) {
 
 void GameState::update(float delta) {
   board_->update(delta);
+  if(board_->isGameOver()){
+    board_.reset();
+    board_ = std::make_unique<Board>();
+  }
 }
 
 void GameState::fixedUpdate(float delta) {

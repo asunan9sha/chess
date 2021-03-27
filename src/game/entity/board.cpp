@@ -11,7 +11,7 @@
 #include "utils/assert.hpp"
 
 
-Board::Board() : pickedCell_(nullptr), isWhiteTurn_(true) {
+Board::Board() : pickedCell_(nullptr), isWhiteTurn_(true), isGameOver_(false) {
   initBoard();
 
   for (size_t i = 0; i < BOARD_SIZE; i++) {
@@ -70,6 +70,7 @@ void Board::update(float delta) {
   if (isKingChecked()) {
     if (isCheckmate()) {
       std::cout << "game over" << std::endl;
+      isGameOver_ = true;
       return;
     }
     std::cout << "king is checked" << std::endl;
@@ -77,10 +78,6 @@ void Board::update(float delta) {
   } else {
     std::cout << "king is NOT checked" << std::endl;
     std::cout << "------------------------------" << std::endl;
-  }
-  for (size_t i = 0; i < BOARD_SIZE; i++) {
-    for (size_t j = 0; j < BOARD_SIZE; j++) {
-    }
   }
 }
 
@@ -379,27 +376,18 @@ bool Board::isKingChecked() {
   vec2 kingPos;
   std::vector<vec2> chekingPieces;
 
-  if (isWhiteTurn_) {
-    kingPos = findKingPos(PieceType::whiteKing);
+  kingPos = findKingPos(isWhiteTurn_ ? PieceType::whiteKing : PieceType::blackKing);
 
-    for (size_t i = 0; i < BOARD_SIZE; i++) {
-      for (size_t j = 0; j < BOARD_SIZE; j++) {
-        if (!board_[j][i]->isPeacePlaced()) {
-          continue;
-        }
+  for (size_t i = 0; i < BOARD_SIZE; i++) {
+    for (size_t j = 0; j < BOARD_SIZE; j++) {
+      if (!board_[j][i]->isPeacePlaced()) {
+        continue;
+      }
+      if (isWhiteTurn_) {
         if (static_cast<int>(board_[j][i]->getPiece()->getType()) >= 6) {
           chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
         }
-      }
-    }
-  } else {
-    kingPos = findKingPos(PieceType::blackKing);
-
-    for (size_t i = 0; i < BOARD_SIZE; i++) {
-      for (size_t j = 0; j < BOARD_SIZE; j++) {
-        if (!board_[j][i]->isPeacePlaced()) {
-          continue;
-        }
+      } else {
         if (static_cast<int>(board_[j][i]->getPiece()->getType()) <= 5) {
           chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
         }
@@ -415,8 +403,6 @@ bool Board::isKingChecked() {
           board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::whitePawn) {
         if (m.x != p.x) {
           return true;
-        } else {
-          continue;
         }
       }
       if (board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getType() == PieceType::blackKnight ||
@@ -425,8 +411,6 @@ bool Board::isKingChecked() {
       }
       if (!isPieceBetween(kingPos, p)) {
         return true;
-      } else {
-        continue;
       }
     }
   }
@@ -446,34 +430,27 @@ vec2 Board::findKingPos(PieceType type) {
 bool Board::isCheckmate() {
   Cell tempPiece;
   std::vector<vec2> chekingPieces;
-  if (isWhiteTurn_) {
 
-    for (size_t i = 0; i < BOARD_SIZE; i++) {
-      for (size_t j = 0; j < BOARD_SIZE; j++) {
-        if (!board_[j][i]->isPeacePlaced()) {
-          continue;
-        }
+  for (size_t i = 0; i < BOARD_SIZE; i++) {
+    for (size_t j = 0; j < BOARD_SIZE; j++) {
+      if (!board_[j][i]->isPeacePlaced()) {
+        continue;
+      }
+      if (isWhiteTurn_) {
         if (static_cast<int>(board_[j][i]->getPiece()->getType()) <= 5) {
           chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
         }
-      }
-    }
-  } else {
-
-    for (size_t i = 0; i < BOARD_SIZE; i++) {
-      for (size_t j = 0; j < BOARD_SIZE; j++) {
-        if (!board_[j][i]->isPeacePlaced()) {
-          continue;
-        }
+      } else {
         if (static_cast<int>(board_[j][i]->getPiece()->getType()) >= 6) {
           chekingPieces.push_back(board_[j][i]->getPiece()->getPosition());
         }
       }
     }
   }
+
   for (auto &p : chekingPieces) {
     for (auto &m : board_[p.y / CELL_SIZE][p.x / CELL_SIZE]->getPiece()->getPossibleMoves()) {
-      if(m.x > 700 || m.x < 0 || m.y > 700 || m.x < 0){
+      if (m.x > 700 || m.x < 0 || m.y > 700 || m.y < 0) {
         continue;
       }
       tryToMove(p, m);

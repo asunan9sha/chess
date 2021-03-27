@@ -15,6 +15,8 @@ public:
   void input(const sf::Event &event) override;
   void update(float delta) override;
 
+  bool isGameOver() { return isGameOver_; }
+
   Cell &getCell(size_t x, size_t y);
 
 private:
@@ -48,6 +50,7 @@ private:
   Cell *pickedCell_;
 
   bool isWhiteTurn_;
+  bool isGameOver_;
 };
 
 
